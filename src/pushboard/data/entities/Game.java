@@ -9,7 +9,7 @@
     0.1
 @date
     - Created: 2011-04-04
-    - Modified: 2011-04-10
+    - Modified: 2011-04-11
     .
 @note
     References:
@@ -107,8 +107,8 @@ public class Game {
         return user1Score;
     }
 
-    public void setUser1Score(int user) {
-        this.user1Score = user;
+    public void setUser1Score(int score) {
+        this.user1Score = score;
     }
 
     public String getUser2() {
@@ -123,8 +123,8 @@ public class Game {
         return user1Score;
     }
 
-    public void setUser2Score(int user) {
-        this.user2Score = user;
+    public void setUser2Score(int score) {
+        this.user2Score = score;
     }
 
     public String getUser3() {
@@ -136,11 +136,11 @@ public class Game {
     }
 
     public int getUser3Score() {
-        return user1Score;
+        return user3Score;
     }
 
-    public void setUser3Score(int user) {
-        this.user2Score = user;
+    public void setUser3Score(int score) {
+        this.user3Score = score;
     }
 
     public Text getBoard() {
