@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns="http://java.sun.com/xml/ns/javaee"
+xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+	<context-param>
+		<description>Base site URL with a trailing slash.</description>
+		<param-name>base_url</param-name>
+		<param-value>http://www.williamchang.org/</param-value>
+	</context-param>
+	<context-param>
+		<description>Default character set.</description>
+		<param-name>charset</param-name>
+		<param-value>UTF-8</param-value>
+	</context-param>
+
+	<servlet>
+		<servlet-name>Game</servlet-name>
+		<servlet-class>pushboard.web.GameServlet</servlet-class>
+		<init-param>
+			<param-name>redirect_url.guest</param-name>
+			<param-value>/pushboard/user</param-value>
+		</init-param>
+	</servlet>
+	<servlet>
+		<servlet-name>Channel.Opened</servlet-name>
+		<servlet-class>pushboard.web.ChannelServlet</servlet-class>
+		<init-param>
+			<param-name>action</param-name>
+			<param-value>opened</param-value>
+		</init-param>
+	</servlet>
+	<servlet>
+		<servlet-name>Channel.Check</servlet-name>
+		<servlet-class>pushboard.web.ChannelServlet</servlet-class>
+		<init-param>
+			<param-name>action</param-name>
+			<param-value>check</param-value>
+		</init-param>
+	</servlet>
+	<servlet>
+		<servlet-name>Channel.Move</servlet-name>
+		<servlet-class>pushboard.web.ChannelServlet</servlet-class>
+		<init-param>
+			<param-name>action</param-name>
+			<param-value>move</param-value>
+		</init-param>
+	</servlet>
+	<servlet>
+		<servlet-name>User.Index</servlet-name>
+		<servlet-class>pushboard.web.UserServlet</servlet-class>
+		<init-param>
+			<param-name>action</param-name>
+			<param-value>index</param-value>
+		</init-param>
+	</servlet>
+	<servlet>
+		<servlet-name>User.Create</servlet-name>
+		<servlet-class>pushboard.web.UserServlet</servlet-class>
+		<init-param>
+			<param-name>action</param-name>
+			<param-value>create</param-value>
+		</init-param>
+	</servlet>
+	<servlet>
+		<servlet-name>User.Logout</servlet-name>
+		<servlet-class>pushboard.web.UserServlet</servlet-class>
+		<init-param>
+			<param-name>action</param-name>
+			<param-value>logout</param-value>
+		</init-param>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Game</servlet-name>
+		<url-pattern>/pushboard</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Channel.Opened</servlet-name>
+		<url-pattern>/pushboard/channel/opened</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Channel.Check</servlet-name>
+		<url-pattern>/pushboard/channel/check</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Channel.Move</servlet-name>
+		<url-pattern>/pushboard/channel/move</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>User.Index</servlet-name>
+		<url-pattern>/pushboard/user</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>User.Create</servlet-name>
+		<url-pattern>/pushboard/user/create</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>User.Logout</servlet-name>
+		<url-pattern>/pushboard/user/logout</url-pattern>
+	</servlet-mapping>
+
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+</web-app>
