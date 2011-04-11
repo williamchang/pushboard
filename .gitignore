@@ -1,0 +1,9 @@
+# Set certain folders/files or patterns to be ignored.
+.svn/
+.settings/
+war/WEB-INF/appengine-generated/
+war/WEB-INF/classes/
+war/WEB-INF/lib/
+.classpath
+.project
+.DS_Store
