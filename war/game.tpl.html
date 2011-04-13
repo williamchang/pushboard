@@ -2,10 +2,11 @@
 <html lang="en-US" dir="ltr">
 <head> 
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+	<meta name="viewport" content="width=device-width,initial-scale=1"/>
 	<!--[if ie]><meta http-equiv="X-UA-Compatible" content="chrome=1"><![endif]-->
 	<meta name="author" content="William Chang"/>
 	<meta name="designer" content="William Chang"/>
-	<title>Push Board Prototype</title>
+	<title>Game - Push Board</title>
 <!-- BEGIN: Styles -->
 	<link href="/_assets/css/main.css" media="all" rel="stylesheet" type="text/css"/>
 <!-- END: Styles -->
@@ -14,8 +15,8 @@
 <div id="frame">
 	<div id="region_header">
 <!-- BEGIN: Region Header -->
-		<h1>Push Board Prototype</h1>
-		<p>Share your game by passing this link: <a href="$game_link$">$game_link$</a></p>
+		<h1>Prototype</h1>
+		<p>Push Board Game Web Application using Comet (aka HTTP Server Push) Technology Stack: HTML 5, JavaScript jQuery, Java EE, Java Persistence API (JPA).</p>
 <!-- END: Region Header -->
 	</div>
 	<div class="line"></div>
@@ -27,12 +28,14 @@
 		<div id="timer">Timer : <span class="value"></span> seconds</div>
 		<div id="scores"></div>
 		<div class="controlpanel">
-			<a href="#" class="btn btn_connect">Connect</a> <a href="#" class="btn btn_disconnect" style="display:none;">Disconnect</a> <a href="#" class="btn btn_start">Start Game</a>
+			<a href="#" class="btn btn_connect">Connect</a> <a href="#" class="btn btn_disconnect" style="display:none;">Disconnect</a> <a href="#" class="btn btn_start">Start Game</a> <a href="#" class="btn btn_end" style="display:none;">End Game</a>
 		</div>
 		<div id="message_waitingforplayers" style="display:none;">
 			<div>Waiting for another player to join.</div>
-			<div>Send them this link to play:</div>
-			<div><a href="$game_link$">$game_link$</a></div>
+		</div>
+		<div id="message_sharelink" style="display:block;">
+			<div>Share them this link to play:</div>
+			<div class="code"><a href="$game_link$">$game_link$</a></div>
 		</div>
 <!-- END: Template Region Middle -->
 	</div>
@@ -60,6 +63,7 @@ $(document).ready(function() {
 		strChannelOpenedUrl:'/pushboard/channel/opened',
 		strChannelCheckUrl:'/pushboard/channel/check',
 		strChannelMoveUrl:'/pushboard/channel/move',
+		strChannelResetUrl:'/pushboard/channel/reset',
 		strUserMeId:'$user_me$',
 		strGameKey:'$game_key$',
 		strChannelToken:'$channel_token$',

@@ -9,7 +9,7 @@
     0.1
 @date
     - Created: 2011-04-04
-    - Modified: 2011-04-11
+    - Modified: 2011-04-13
     .
 @note
     References:
@@ -35,6 +35,7 @@ import com.google.appengine.api.channel.*;
 import com.google.appengine.api.datastore.KeyFactory;
 import pushboard.data.core.EntityManagerFactory;
 import pushboard.data.entities.*;
+import pushboard.data.entities.Game.ChannelMessageType;
 
 @SuppressWarnings("serial")
 public class GameServlet extends HttpServlet {
@@ -88,7 +89,7 @@ public class GameServlet extends HttpServlet {
             q.setParameter("user1", userId);
             q.executeUpdate();
             // Create record.
-            obj1 = new Game(userId, "", "", Game.createPieces(3, 48), 30, dateCreated);
+            obj1 = new Game(userId, "", "", Game.createPieces(3, 36), 12, dateCreated);
             try {
                 em.persist(obj1);
             } finally {
@@ -115,7 +116,7 @@ public class GameServlet extends HttpServlet {
         s1 = s1.replaceAll("\\$game_key\\$", gameKey);
         s1 = s1.replaceAll("\\$game_link\\$", getGameUri(req.getRequestURL().toString(), gameKey));
         s1 = s1.replaceAll("\\$channel_token\\$", token);
-        s1 = s1.replaceAll("\\$channel_message_initial\\$", obj1.getChannelMessage());
+        s1 = s1.replaceAll("\\$channel_message_initial\\$", obj1.getChannelMessage(ChannelMessageType.GENERIC));
 
         // Set view.
         resp.setContentType("text/html");

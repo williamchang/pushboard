@@ -48,11 +48,23 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		</init-param>
 	</servlet>
 	<servlet>
+		<servlet-name>Channel.Reset</servlet-name>
+		<servlet-class>pushboard.web.ChannelServlet</servlet-class>
+		<init-param>
+			<param-name>action</param-name>
+			<param-value>reset</param-value>
+		</init-param>
+	</servlet>
+	<servlet>
 		<servlet-name>User.Index</servlet-name>
 		<servlet-class>pushboard.web.UserServlet</servlet-class>
 		<init-param>
 			<param-name>action</param-name>
 			<param-value>index</param-value>
+		</init-param>
+		<init-param>
+			<param-name>redirect_url.logout</param-name>
+			<param-value>/pushboard/user/logout</param-value>
 		</init-param>
 	</servlet>
 	<servlet>
@@ -69,6 +81,10 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<init-param>
 			<param-name>action</param-name>
 			<param-value>logout</param-value>
+		</init-param>
+		<init-param>
+			<param-name>redirect_url.guest</param-name>
+			<param-value>/pushboard/user</param-value>
 		</init-param>
 	</servlet>
 
@@ -87,6 +103,10 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<servlet-mapping>
 		<servlet-name>Channel.Move</servlet-name>
 		<url-pattern>/pushboard/channel/move</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Channel.Reset</servlet-name>
+		<url-pattern>/pushboard/channel/reset</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>User.Index</servlet-name>

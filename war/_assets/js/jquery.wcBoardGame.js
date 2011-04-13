@@ -1,6 +1,6 @@
 /**
 @file
-	game.js
+	jquery.wcBoardGame.js
 @brief
 	Copyright 2011 Creative Crew. All rights reserved.
 @author
@@ -11,7 +11,7 @@
 	0.1
 @date
 	- Created: 2011-04-03
-	- Modified: 2011-04-11
+	- Modified: 2011-04-13
 	.
 @note
 	Prerequisites:
@@ -41,23 +41,27 @@ var _opt = null, _optCustoms = null, _optDefaults = {
 	strChannelOpenedUrl:'',
 	strChannelCheckUrl:'',
 	strChannelMoveUrl:'',
+	strChannelResetUrl:'',
 	strUserMeId:'',
 	strGameKey:'',
 	strChannelToken:'',
 	strChannelMessageInitial:'',
+	strMessageWaitingSelector:'#message_waitingforplayers',
+	strMessageSharingSelector:'#message_sharelink',
 	strStartButtonSelector:'.btn_start',
-	strRestartButtonSelector:'.btn_start',
-	strEndButtonSelector:'.btn_start',
+	strEndButtonSelector:'.btn_end',
 	strConnectButtonSelector:'.btn_connect',
 	strDisconnectButtonSelector:'.btn_disconnect',
-	numPlayers:2,
+	numPlayersMinimum:2,
+	numPlayersMaximum:3,
 	strTimerSelector:'#timer .value',
-	numTimerSeconds:30,
+	numTimerSeconds:12,
 	strScoresSelector:'#scores',
 	strScoresHtml:'<div class=\"score\"><span class=\"name\"></span> : <span class=\"value\"></span> points</div>',
 	strScoresNameSelector:'> .name',
 	strScoresValueSelector:'> .value',
-	numBoardTableRows:8,
+	numScoresMaximum:30,
+	numBoardTableRows:6,
 	numBoardTableColumns:6,
 	numBoardLineWidth:1
 };
@@ -72,8 +76,10 @@ var _numBoardCellHeight = 50;
 var _objBoardCells = []; // Two-dimension array.
 var _objBoardPieces = []; // One-dimension array.
 
+var _eleMessageWaiting = null;
+var _eleMessageSharing = null;
+
 var _eleStartButton = null;
-var _eleRestartButton = null;
 var _eleEndButton = null;
 var _eleConnectButton = null;
 var _eleDisconnectButton = null;
@@ -90,23 +96,12 @@ var _objPlayerCurrent = null;
 var _numGameState = 0;
 var _enumGameState = {
 	ENDED:0,
-	NEW:1,
+	READY:1,
 	RUNNING:2,
 	WAITING:3
 };
 
 var _objChannelSocket = null;
-var _objChannelData = {
-	strPlayer1:'',
-	numPlayer1Score:0,
-	strPlayer2:'',
-	numPlayer2Score:0,
-	strPlayer3:'',
-	numPlayer3Score:0,
-	objBoard:null,
-	strWinner:'',
-	numState:3
-};
 
 /* Private Methods
 //-------------------------------------------------------------------*/
@@ -142,11 +137,22 @@ function _onClickCanvas(evt) {
 		_sendChannelMessage(_opt.strChannelMoveUrl, {
 			userId:_objPlayerCurrent.strName,
 			userScore:_objPlayerCurrent.numScore,
-			board:$.toJSON(_objBoardPieces),
-			timer:_numTimerSeconds,
-			state:_numGameState
+			move:objCell.objPiece.numIndex
 		});
 	}
+	// Prevent default action.
+	return false;
+}
+/** On event, end game. */
+function _onEndGame(evt) {
+	// Validate state.
+	if(_numGameState == _enumGameState.READY) {return false;}
+	if($(this).attr('disabled') == 'disabled') {return false;}
+	// Set document elements.
+	$(this).attr('disabled', 'disabled').hide();
+	$(_eleStartButton).show();
+	// End game.
+	memberPublic.endGame();
 	// Prevent default action.
 	return false;
 }
@@ -155,45 +161,50 @@ function _onStartGame(evt) {
 	// Validate state.
 	if(_numGameState == _enumGameState.WAITING) {return false;}
 	if($(this).attr('disabled') == 'disabled') {return false;}
-	// Set button.
-	$(this).attr('disabled', 'disabled').get(0);
+	// Validate and connect to server-side via channel.
+	if(!_objChannelSocket) {$(_eleConnectButton).trigger('click');}
 	// Validate game state.
 	if(_numGameState == _enumGameState.ENDED) {
 		memberPublic.createGame();
 	}
+	// Set document elements.
+	$(this).attr('disabled', 'disabled').hide();
+	$(_eleEndButton).show();
 	// Run game.
 	memberPublic.runGame();
 	// Prevent default action.
 	return false;
 }
-/** On event, disconnect game. */
-function _onDisconnectGame(evt) {
-	// Do something.
-}
 /** On event, channel messaged. */
 function _onChannelMessaged(objMessage) {
+	// Convert JSON string to object.
 	var objData = $.parseJSON(objMessage.data);
-	// Set data.
-	_objChannelData.strPlayer1 = objData.user1;
-	_objChannelData.numPlayer1Score = objData.user1Score;
-	_objChannelData.strPlayer2 = objData.user2;
-	_objChannelData.numPlayer2Score = objData.user2Score;
-	_objChannelData.strPlayer3 = objData.user3;
-	_objChannelData.numPlayer3Score = objData.user3Score;
-	_objChannelData.objBoard = _objBoardPieces = objData.board;
-	_objChannelData.strWinner = objData.winner;
-	_objChannelData.numState = _numGameState = objData.state;
 	// Update game.
-	_setTimer(objData.timer);
-	if(objData.winner) {memberPublic.endGame();}
-	_setPlayer(1, _objChannelData.strPlayer1, _objChannelData.numPlayer1Score);
-	_setPlayer(2, _objChannelData.strPlayer2, _objChannelData.numPlayer2Score);
-	_setPlayer(3, _objChannelData.strPlayer3, _objChannelData.numPlayer3Score);
-	if(_objPlayers.length < _opt.numPlayers) {
-		_numGameState = _enumGameState.WAITING;
-	} else if(_numGameState == _enumGameState.RUNNING) {
+	if(typeof objData.state !== 'undefined') {_numGameState = objData.state;}
+	if(typeof objData.timer !== 'undefined') {_setTimer(objData.timer);}
+	if(typeof objData.board !== 'undefined') {_objBoardPieces = objData.board;}
+	_setPlayer(1, objData.user1, objData.user1Score);
+	_setPlayer(2, objData.user2, objData.user2Score);
+	_setPlayer(3, objData.user3, objData.user3Score);
+	if(_numGameState == _enumGameState.RUNNING) {
 		$(_eleStartButton).trigger('click');
 		_drawPieces(_objBoardPieces);
+		if(_eleMessageWaiting != null) {
+			$(_eleMessageWaiting).hide();
+			_eleMessageWaiting == null;
+		}
+	} else if(_numGameState == _enumGameState.ENDED) {
+		$(_eleEndButton).trigger('click');
+	} else {
+		if(_objPlayers.length < _opt.numPlayersMinimum) {
+			_numGameState = _enumGameState.WAITING;
+			$(_eleMessageWaiting).show();
+		} else {
+			$(_eleMessageWaiting).hide();
+		}
+		if(_objPlayers.length >= _opt.numPlayersMaximum) {
+			$(_eleMessageSharing).hide();
+		}
 	}
 }
 /** On event, channel opened. */
@@ -237,21 +248,20 @@ function _openChannel() {
 /** Create pieces (generate from client-side). */
 function _createPieces() {
 	var numIndex = 0, objCell = null, objPiece = null;
-	_objBoardPieces = [];
+	var objBoardCells = [], objBoardPieces = [];
 	for(var numRow = 0;numRow < _opt.numBoardTableRows;numRow += 1) {
-		_objBoardCells[numRow] = [];
+		objBoardCells[numRow] = [];
 		for(var numColumn = 0;numColumn <= _opt.numBoardTableColumns;numColumn += 1) {
 			// Create object and add to collection.
-			objPiece = new Piece(numIndex, Math.floor(Math.random() * _opt.numPlayers + 1), 1, true);
-			_objBoardPieces[numIndex] = objPiece;
-			// Draw piece.
-			_drawPiece(numRow, numColumn, objPiece);
+			objPiece = new Piece(numIndex, Math.floor(Math.random() * _objPlayers.length + 1), 1, true);
+			objBoardPieces[numIndex] = objPiece;
 			// Create object and add to collections.
-			_objBoardCells[numRow][numColumn] = new Cell(numRow, numColumn, objPiece);
+			objBoardCells[numRow][numColumn] = new Cell(numRow, numColumn, objPiece);
 			// Increment index.
 			numIndex++;
 		}
 	}
+	return objBoardPieces;
 }
 /** Draw board. */
 function _drawBoard() {
@@ -323,7 +333,6 @@ function _drawPieces(objBoardPieces) {
 		numColumn++;
 	}
 }
-
 /** Remove piece. */
 function _removePiece(objCell) {
 	var objPiece = objCell.objPiece;
@@ -332,12 +341,28 @@ function _removePiece(objCell) {
 }
 /** Run timer. */
 function _runTimer() {
-	if(_numGameState == _enumGameState.RUNNING && _numTimerSeconds > 0) {
+	// Validate state.
+	if(_numGameState != _enumGameState.RUNNING) {return;}
+	// Validate timer.
+	if(_numTimerSeconds > 0) {
+		// Decrement.
 		_setTimer(_numTimerSeconds - 1);
-		setTimeout(_runTimer, 1000);
 	} else {
-		memberPublic.endGame();
+
+		// Update server-side via channel.
+		_sendChannelMessage(_opt.strChannelResetUrl, {
+			board:$.toJSON(_createPieces()),
+			timer:_setTimer(_opt.numTimerSeconds),
+			state:_numGameState
+		});
 	}
+	// Call function after a specified number of milliseconds.
+	setTimeout(_runTimer, 1000);
+}
+/** Set timer. */
+function _setTimer(numSeconds) {
+	$(_eleTimer).text(numSeconds);
+	return _numTimerSeconds = numSeconds;
 }
 /** Set player. */
 function _setPlayer(numId, strName, numScore) {
@@ -376,13 +401,12 @@ function _setPlayer(numId, strName, numScore) {
 function _setPlayerScore(objPlayer, objPiece) {
 	// Set score.
 	objPlayer.numScore += objPiece.numValue;
+	// Validate player score.
+	if(objPlayer.numScore >= _opt.numScoresMaximum) {
+		$(_eleEndButton).trigger('click');
+	}
 	// Update markup.
 	$(objPlayer.eleScoreValue).text(objPlayer.numScore);
-}
-/** Set timer. */
-function _setTimer(numSeconds) {
-	_numTimerSeconds = numSeconds;
-	$(_eleTimer).text(numSeconds);
 }
 
 /* Public Methods
@@ -399,6 +423,9 @@ memberPublic = $[_extensionName] = function(eleCanvas, optCustoms) {
 };
 /** Init widget. */
 memberPublic.init = function(eleCanvas) {
+	// Get document elements.
+	_eleMessageWaiting = $(_opt.strMessageWaitingSelector).get(0);
+	_eleMessageSharing = $(_opt.strMessageSharingSelector).get(0);
 	// Init board.
 	_numBoardPixelWidth = 1 + (_opt.numBoardTableColumns * _numBoardCellWidth);
 	_numBoardPixelHeight = 1 + (_opt.numBoardTableRows * _numBoardCellHeight);
@@ -416,37 +443,45 @@ memberPublic.init = function(eleCanvas) {
 	_onChannelMessaged({data:_opt.strChannelMessageInitial});
 	// Bind events.
 	_eleConnectButton = $(_opt.strConnectButtonSelector).bind('click', function(evt) {
+		// Open channel to server-side.
 		_openChannel();
-		$(_eleConnectButton).hide();
+		// Set document elements.
+		$(this).hide();
 		$(_eleDisconnectButton).show();
 		// Prevent default action.
 		return false;
 	}).get(0);
 	_eleDisconnectButton = $(_opt.strDisconnectButtonSelector).bind('click', function(evt) {
+		// End game.
+		$(_eleEndButton).trigger('click');
+		// Close channel to server-side.
 		_closeChannel();
-		$(_eleDisconnectButton).hide();
+		// Set document elements.
+		$(this).hide();
 		$(_eleConnectButton).show();
 		// Prevent default action.
 		return false;
 	}).get(0);
 	_eleStartButton = $(_opt.strStartButtonSelector).bind('click', _onStartGame).get(0);
+	_eleEndButton = $(_opt.strEndButtonSelector).bind('click', _onEndGame).get(0);
 };
 /** Get options. */
 memberPublic.getOptions = function() {
 	return _opt;
 };
-/** Create (new) game. */
+/** Create game. */
 memberPublic.createGame = function() {
 	// Draw board.
 	_drawBoard();
 	// Set timer.
 	_setTimer(_opt.numTimerSeconds);
 	// Set state.
-	_numGameState = _enumGameState.NEW;
+	_numGameState = _enumGameState.READY;
 };
 /** Run game. */
 memberPublic.runGame = function() {
 	_numGameState = _enumGameState.RUNNING;
+	$(_eleEndButton).removeAttr('disabled');
 	_runTimer();
 	// Update server-side via channel.
 	_sendChannelMessage(_opt.strChannelCheckUrl, {
@@ -457,7 +492,8 @@ memberPublic.runGame = function() {
 /** End game. */
 memberPublic.endGame = function() {
 	_numGameState = _enumGameState.ENDED;
-	$(_eleStartButton).removeAttr('disabled');
+	$(_eleStartButton).removeAttr('disabled').hide();
+	$(_eleEndButton).hide();
 	// Update server-side via channel.
 	_sendChannelMessage(_opt.strChannelCheckUrl, {
 		timer:_numTimerSeconds,
@@ -476,10 +512,10 @@ function Player(numId, strName, numScore, eleScore, eleScoreValue) {
 	this.eleScoreValue = eleScoreValue;
 }
 function Piece(numIndex, numPlayerId, numValue, boolVisible) {
+	this.boolVisible = boolVisible;
 	this.numIndex = numIndex;
 	this.numPlayerId = numPlayerId;
 	this.numValue = numValue;
-	this.boolVisible = boolVisible;
 }
 function Cell(numRow, numColumn, objPiece) {
 	this.numRow = numRow;

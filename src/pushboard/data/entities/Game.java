@@ -9,7 +9,7 @@
     0.1
 @date
     - Created: 2011-04-04
-    - Modified: 2011-04-11
+    - Modified: 2011-04-13
     .
 @note
     References:
@@ -33,9 +33,15 @@ import com.google.appengine.repackaged.org.json.*;
 public class Game {
     public enum State {
         ENDED, // 0
-        NEW,
+        READY,
         RUNNING,
         WAITING
+    }
+    public enum ChannelMessageType {
+        UNKNOWN, // 0
+        GENERIC,
+        MOVE,
+        RESET
     }
 
     @Id
@@ -143,8 +149,8 @@ public class Game {
         this.user3Score = score;
     }
 
-    public Text getBoard() {
-        return board;
+    public String getBoard() {
+        return board.getValue();
     }
 
     public void setBoard(String board) {
@@ -166,6 +172,14 @@ public class Game {
     public void setState(int state) {
         this.state = state;
     }
+    
+    public String getWinner() {
+        return winner;
+    }
+
+    public void setWinner(String winner) {
+        this.winner = winner;
+    }
 
     public Date getDateCreated() {
         return dateCreated;
@@ -175,7 +189,7 @@ public class Game {
         return user + KeyFactory.keyToString(id);
     }
 
-    public String getChannelMessage() {
+    public String getChannelMessage(ChannelMessageType type) {
         JSONObject jsonObject = new JSONObject();
 
         try {
@@ -185,31 +199,40 @@ public class Game {
             jsonObject.put("user2Score", user2Score);
             jsonObject.put("user3", user3);
             jsonObject.put("user3Score", user3Score);
-            jsonObject.put("board", new JSONArray(board.getValue()));
-            jsonObject.put("timer", timer);
-            jsonObject.put("winner", winner);
-            jsonObject.put("state", state);
+            switch(type) {
+                default:
+                case UNKNOWN:
+                case GENERIC:
+                case RESET:
+                    jsonObject.put("board", new JSONArray(board.getValue()));
+                    jsonObject.put("timer", timer);
+                    jsonObject.put("state", state);
+                    break;
+                case MOVE:
+                    jsonObject.put("board", new JSONArray(board.getValue()));
+                    break;
+            }
         } catch(JSONException ex) {
             ex.printStackTrace();
         }
         return jsonObject.toString();
     }
 
-    private void sendUpdateToClient(String user) {
+    private void sendUpdateToClient(String user, ChannelMessageType type) {
         if(user != null && !user.isEmpty()) {
             ChannelService svc = ChannelServiceFactory.getChannelService();
             String channelKey = getChannelKey(user);
-            svc.sendMessage(new ChannelMessage(channelKey, getChannelMessage()));
+            svc.sendMessage(new ChannelMessage(channelKey, getChannelMessage(type)));
         }
     }
 
-    public void sendUpdateToClients() {
-        sendUpdateToClient(user1);
-        sendUpdateToClient(user2);
-        sendUpdateToClient(user3);
+    public void sendUpdateToClients(ChannelMessageType type) {
+        sendUpdateToClient(user1, type);
+        sendUpdateToClient(user2, type);
+        sendUpdateToClient(user3, type);
     }
 
-    public boolean setMove(String userId, int userScore, String board, int timer, int state) {
+    public boolean setMove(String userId, int userScore, String move) {
         boolean pass = false;
 
         if(userId.equals(getUser1())) {
@@ -223,13 +246,34 @@ public class Game {
             pass = true;
         }
         if(pass == true) {
+            // Modify JSON string.
+            String board = getBoard();
+            String find = "\"numIndex\":" + move;
+            String pairTrue = "\"boolVisible\":true";
+            String pairFalse = "\"boolVisible\":false";
+            int posFind = board.indexOf(find);
+            int posPairBegin = -1;
+            if(posFind >= 0) {
+                posPairBegin = board.lastIndexOf(pairTrue, posFind);
+            }
+            if(posFind >= 0 && posPairBegin >= 0) {
+                board = board.substring(0, posPairBegin) + pairFalse + board.substring(posPairBegin + pairTrue.length());
+            }
+            // Set board.
             setBoard(board);
-            setTimer(timer);
-            setState(state);
-            sendUpdateToClients();
+            // Send updates to client-side.
+            sendUpdateToClients(ChannelMessageType.MOVE);
             return true;
         }
         return false;
+    }
+
+    public boolean setGame(String board, int timer, int state) {
+        setBoard(board);
+        setTimer(timer);
+        setState(state);
+        sendUpdateToClients(ChannelMessageType.RESET);
+        return true;
     }
 
     public static String createPieces(int numPlayers, int maxLength) {

@@ -9,7 +9,7 @@
     0.1
 @date
     - Created: 2011-04-04
-    - Modified: 2011-04-11
+    - Modified: 2011-04-12
     .
 @note
     References:
@@ -40,13 +40,31 @@ public class UserServlet extends HttpServlet {
     private static final Logger log = Logger.getLogger(UserServlet.class.getName());
 
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        HttpSession webSession = req.getSession(true);
+
+        StringBuilder sb1 = new StringBuilder();
+        String action = getInitParameter("action");
+        String redirectLogoutUrl = getInitParameter("redirect_url.logout");
         String gameKey = req.getParameter("gameKey");
 
         log.info("HTTP GET");
 
+        // Validate action from URL.
+        if(action.equals("logout")) {
+            sb1.append(logout(req, resp));
+            resp.getWriter().write(sb1.toString());
+        }
+
         // Validate parameters.
         if(gameKey == null || gameKey.isEmpty()) {
             gameKey = "";
+        }
+
+        // Validate host.
+        String hostGameKey = (String)webSession.getAttribute("gameKey");
+        String hostMessage = "";
+        if(hostGameKey != null && !hostGameKey.isEmpty()) {
+            hostMessage = "You are currently hosting a game, please <a href=" + redirectLogoutUrl + ">logout</a>.";
         }
 
         // Get template.
@@ -56,8 +74,8 @@ public class UserServlet extends HttpServlet {
         String s1 = new String(buffer.array());
 
         // Set template.
-        s1 = s1.replaceAll("\\$message\\$", "Hello user!");
         s1 = s1.replaceAll("\\$game_key\\$", gameKey);
+        s1 = s1.replaceAll("\\$status\\$", hostMessage);
 
         // Set view.
         resp.setContentType("text/html");
@@ -74,12 +92,11 @@ public class UserServlet extends HttpServlet {
         resp.setContentType("text/plain");
         resp.setCharacterEncoding("UTF-8");
 
+        // Validate action from URL.
         if(action.equals("index")) {
             sb1.append(index(req, resp));
         } else if(action.equals("create")) {
             sb1.append(create(req, resp));
-        } else if(action.equals("logout")) {
-            sb1.append(logout(req, resp));
         } else {
             sb1.append("Missing action name.");
         }
@@ -132,10 +149,14 @@ public class UserServlet extends HttpServlet {
     }
     
     public String logout(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String redirectGuestUrl = getInitParameter("redirect_url.guest");
+
         HttpSession webSession = req.getSession(false);
         if(webSession != null) {
             webSession.invalidate();
         }
+        // Redirect user.
+        resp.sendRedirect(resp.encodeRedirectURL(redirectGuestUrl));
         return "1";
     }
 }

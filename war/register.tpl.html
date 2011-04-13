@@ -2,10 +2,11 @@
 <html lang="en-US" dir="ltr">
 <head> 
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+	<meta name="viewport" content="width=device-width,initial-scale=1"/>
 	<!--[if ie]><meta http-equiv="X-UA-Compatible" content="chrome=1"><![endif]-->
 	<meta name="author" content="William Chang"/>
 	<meta name="designer" content="William Chang"/>
-	<title>Register</title>
+	<title>Register - Push Board</title>
 <!-- BEGIN: Styles -->
 	<link href="/_assets/css/main.css" media="all" rel="stylesheet" type="text/css"/>
 <!-- END: Styles -->
@@ -20,21 +21,21 @@
 	<div class="line"></div>
 	<div id="region_middle">
 <!-- BEGIN: Template Region Middle -->
-		<p>$message$</p>
+		<p>The Push Board is an online multiplayer game. You must have 2-3 players to play. If the button is labeled &quot;Create&quot;, then you are creating a new game. If the button is labeled &quot;Join&quot;, then you are joining a game already created.</p>
 		<div class="form">
 			<div class="item">
-				<label>Name</label>
-				<br/>
-				<input type="text" class="txt_useralias" value=""/>
-				<br/>
+				<div class="row">
+					<label>Name</label><span class="field"><input type="text" class="txt_useralias" value=""/></span>
+				</div>
 				<div class="controlpanel">
 					<a href="#" class="btn btn_create">Create</a>
 					<input type="hidden" class="hid_gamekey" value="$game_key$">
 				</div>
 			</div>
 		</div>
-		<div class="status"></div>
-		<h3>Games Hosted By</h3>
+		<div class="status">$status$</div>
+		<h3>Games Created</h3>
+		<p>For your convenience, if your friend cannot pass the link through any mediums, then click the link below to load your friend's game. Next, input your name and click the &quot;Join&quot; button.</p>
 		<div class="records_container"><div class="items">
 		</div></div>
 <!-- END: Template Region Middle -->
@@ -66,6 +67,7 @@ var _opt = null, _optCustoms = null, _optDefaults = {
 	strListItemHtml:'<div class="\item\"><span>{0}</span></div>',
 	strListEmptyHtml:'<div class="\empty\">No records found.</div>',
 	strFormSelector:'.form',
+	strJoinButtonLabel:'Join',
 	strStatusSelector:'.status'
 };
 
@@ -93,6 +95,8 @@ memberPublic.init = function() {
 	_eleCreateButton = $('.btn_create', _eleRegion).bind('click', _onRedirectToMain).get(0);
 
 	$('.txt_useralias', _eleRegion).bind('keyup', _onKey).focus();
+	var strGameKey = $('.hid_gamekey', _eleRegion).val();
+	if(strGameKey.length > 0) {$(_eleCreateButton).text(_opt.strJoinButtonLabel);}
 	_getRecords();
 };
 /** Get options. */
