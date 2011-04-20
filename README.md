@@ -1,8 +1,8 @@
 # Introduction
 
-Push Board Game Web Application using Comet (aka HTTP Server Push) Technology Stack: HTML 5, JavaScript jQuery, Java EE, Java Persistence API (JPA
+Push Board Game Web Application using Comet (aka HTTP Server Push) Technology Stack: HTML 5, JavaScript jQuery, Java EE, Java Persistence API (JPA)
 
-by [William Chang](http://www.williamchang.org)
+Developed by [William Chang](http://www.williamchang.org)
 
 # Usage
 
