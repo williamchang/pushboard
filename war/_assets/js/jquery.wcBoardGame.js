@@ -253,7 +253,7 @@ function _createPieces() {
 		objBoardCells[numRow] = [];
 		for(var numColumn = 0;numColumn <= _opt.numBoardTableColumns;numColumn += 1) {
 			// Create object and add to collection.
-			objPiece = new Piece(numIndex, Math.floor(Math.random() * _objPlayers.length + 1), 1, true);
+			objPiece = new Piece(numIndex, Math.floor(Math.random() * _opt.numPlayersMaximum + 1), 1, true);
 			objBoardPieces[numIndex] = objPiece;
 			// Create object and add to collections.
 			objBoardCells[numRow][numColumn] = new Cell(numRow, numColumn, objPiece);

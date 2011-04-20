@@ -22,8 +22,7 @@
 
 package pushboard.web;
 
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.CharBuffer;
 import java.util.Date;
 import java.util.List;
@@ -68,7 +67,7 @@ public class UserServlet extends HttpServlet {
         }
 
         // Get template.
-        FileReader reader = new FileReader("register.tpl.html");
+        Reader reader = new InputStreamReader(new FileInputStream("register.tpl.html"), "UTF-8");
         CharBuffer buffer = CharBuffer.allocate(16384);
         reader.read(buffer);
         String s1 = new String(buffer.array());

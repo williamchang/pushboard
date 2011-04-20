@@ -21,8 +21,7 @@
 
 package pushboard.web;
 
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.CharBuffer;
@@ -105,7 +104,7 @@ public class GameServlet extends HttpServlet {
         String token = svc.createChannel(obj1.getChannelKey(userId));
 
         // Get template.
-        FileReader reader = new FileReader("game.tpl.html");
+        Reader reader = new InputStreamReader(new FileInputStream("game.tpl.html"), "UTF-8");
         CharBuffer buffer = CharBuffer.allocate(16384);
         reader.read(buffer);
         String s1 = new String(buffer.array());
