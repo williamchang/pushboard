@@ -63,7 +63,9 @@ public class GameServlet extends HttpServlet {
 
         // Validate host game key.
         if(gameKey == null || gameKey.isEmpty()) {
+            // Get host game key from session.
             String hostGameKey = (String)webSession.getAttribute("gameKey");
+            // Validate host game key from sesison.
             if(hostGameKey != null && !hostGameKey.isEmpty()) {
                 gameKey = hostGameKey;
             }
@@ -73,6 +75,12 @@ public class GameServlet extends HttpServlet {
             try {
                 // Get record.
                 obj1 = em.find(Game.class, KeyFactory.stringToKey(gameKey));
+                // Validate record.
+                if(obj1 == null) {
+                    // Redirect user.
+                    resp.sendRedirect(resp.encodeRedirectURL(redirectGuestUrl));
+                    return;
+                }
                 // Set record for other users.
                 if(obj1.getUser2().isEmpty() && !userId.equals(obj1.getUser1()) && !userId.equals(obj1.getUser3())) {
                     obj1.setUser2(userId);
