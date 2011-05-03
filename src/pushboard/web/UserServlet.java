@@ -9,7 +9,7 @@
     0.1
 @date
     - Created: 2011-04-04
-    - Modified: 2011-04-12
+    - Modified: 2011-05-03
     .
 @note
     References:
@@ -73,6 +73,7 @@ public class UserServlet extends HttpServlet {
         String s1 = new String(buffer.array());
 
         // Set template.
+        s1 = s1.replaceAll("[\u0000]", "");
         s1 = s1.replaceAll("\\$game_key\\$", gameKey);
         s1 = s1.replaceAll("\\$status\\$", hostMessage);
 
@@ -146,7 +147,7 @@ public class UserServlet extends HttpServlet {
 
         return "1";
     }
-    
+
     public String logout(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String redirectGuestUrl = getInitParameter("redirect_url.guest");
 

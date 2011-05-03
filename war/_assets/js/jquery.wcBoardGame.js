@@ -11,7 +11,7 @@
 	0.1
 @date
 	- Created: 2011-04-03
-	- Modified: 2011-04-13
+	- Modified: 2011-05-03
 	.
 @note
 	Prerequisites:
@@ -348,13 +348,15 @@ function _runTimer() {
 		// Decrement.
 		_setTimer(_numTimerSeconds - 1);
 	} else {
-
-		// Update server-side via channel.
-		_sendChannelMessage(_opt.strChannelResetUrl, {
-			board:$.toJSON(_createPieces()),
-			timer:_setTimer(_opt.numTimerSeconds),
-			state:_numGameState
-		});
+		// Validate host player.
+		if(_objPlayerCurrent.numId == 1) {
+			// Update server-side via channel.
+			_sendChannelMessage(_opt.strChannelResetUrl, {
+				board:$.toJSON(_createPieces()),
+				timer:_setTimer(_opt.numTimerSeconds),
+				state:_numGameState
+			});
+		}
 	}
 	// Call function after a specified number of milliseconds.
 	setTimeout(_runTimer, 1000);

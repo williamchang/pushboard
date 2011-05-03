@@ -9,7 +9,7 @@
     0.1
 @date
     - Created: 2011-04-04
-    - Modified: 2011-04-13
+    - Modified: 2011-05-03
     .
 @note
     References:
@@ -118,6 +118,7 @@ public class GameServlet extends HttpServlet {
         String s1 = new String(buffer.array());
 
         // Set template.
+        s1 = s1.replaceAll("[\u0000]", "");
         s1 = s1.replaceAll("\\$user_me\\$", userId);
         s1 = s1.replaceAll("\\$game_timer\\$", Integer.toString(obj1.getTimer()));
         s1 = s1.replaceAll("\\$game_key\\$", gameKey);
