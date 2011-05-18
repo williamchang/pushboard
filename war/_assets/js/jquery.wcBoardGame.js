@@ -33,9 +33,9 @@
 var memberPublic = {};
 var _extensionName = 'wcBoardGame';
 // Validate prerequisites.
-if(typeof goog.appengine.Channel !== 'function') {throw('Dependency Error: Google App Engine Channel API is missing.');}
-if(typeof goog.appengine.Socket !== 'function') {throw('Dependency Error: Google App Engine Channel API is missing.');}
-if(typeof $.toJSON !== 'function') {throw('Dependency Error: jQuery plugin JSON is missing.');}
+if(typeof goog.appengine.Channel !== 'function') {throw 'Dependency Error: Google App Engine Channel API is missing.';}
+if(typeof goog.appengine.Socket !== 'function') {throw 'Dependency Error: Google App Engine Channel API is missing.';}
+if(typeof $.toJSON !== 'function') {throw 'Dependency Error: jQuery plugin JSON is missing.';}
 // Declare options and set default values.
 var _opt = null, _optCustoms = null, _optDefaults = {
 	strChannelOpenedUrl:'',
@@ -55,7 +55,7 @@ var _opt = null, _optCustoms = null, _optDefaults = {
 	numPlayersMinimum:2,
 	numPlayersMaximum:3,
 	strTimerSelector:'#timer .value',
-	numTimerSeconds:12,
+	numTimerSeconds:8,
 	strScoresSelector:'#scores',
 	strScoresHtml:'<div class=\"score\"><span class=\"name\"></span> : <span class=\"value\"></span> points</div>',
 	strScoresNameSelector:'> .name',
@@ -73,8 +73,8 @@ var _numBoardPixelWidth = 0;
 var _numBoardPixelHeight = 0;
 var _numBoardCellWidth = 50;
 var _numBoardCellHeight = 50;
-var _objBoardCells = []; // Two-dimension array.
-var _objBoardPieces = []; // One-dimension array.
+var _objBoardCells = []; // Two-dimensional array.
+var _objBoardPieces = []; // One-dimensional array.
 
 var _eleMessageWaiting = null;
 var _eleMessageSharing = null;
@@ -224,7 +224,7 @@ function _sendChannelMessage(strUrl, objParameters) {
 			console.log(data);
 		} else if(status == 'success') {
 			// Do nothing.
-		} else {throw(status);}
+		} else {throw status;}
 	});
 }
 /** Close (Comet) channel. */
@@ -316,7 +316,7 @@ function _drawPiece(numRow, numColumn, objPiece) {
 		_ctxCanvas.clearRect(numX, numY, _numBoardCellWidth - _opt.numBoardLineWidth, _numBoardCellHeight - _opt.numBoardLineWidth);
 	}
 }
-/** Draw pieces from one-dimension array (retrieve from server-side). */
+/** Draw pieces from one-dimensional array (retrieve from server-side). */
 function _drawPieces(objBoardPieces) {
 	var numRow = -1, numColumn = 0;
 	for(var numIndex = 0;numIndex < objBoardPieces.length;numIndex += 1) {

@@ -96,7 +96,7 @@ public class GameServlet extends HttpServlet {
             q.setParameter("user1", userId);
             q.executeUpdate();
             // Create record.
-            obj1 = new Game(userId, "", "", Game.createPieces(3, 36), 12, dateCreated);
+            obj1 = new Game(userId, "", "", Game.createPieces(3, 36), 8, dateCreated);
             try {
                 em.persist(obj1);
             } finally {
