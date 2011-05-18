@@ -11,7 +11,7 @@
 	0.1
 @date
 	- Created: 2011-04-03
-	- Modified: 2011-05-03
+	- Modified: 2011-05-18
 	.
 @note
 	Prerequisites:
@@ -147,9 +147,9 @@ function _onClickCanvas(evt) {
 function _onEndGame(evt) {
 	// Validate state.
 	if(_numGameState == _enumGameState.READY) {return false;}
-	if($(this).attr('disabled') == 'disabled') {return false;}
+	if($(this).hasClass('disabled') == true) {return false;}
 	// Set document elements.
-	$(this).attr('disabled', 'disabled').hide();
+	$(this).addClass('disabled').hide();
 	$(_eleStartButton).show();
 	// End game.
 	memberPublic.endGame();
@@ -160,7 +160,7 @@ function _onEndGame(evt) {
 function _onStartGame(evt) {
 	// Validate state.
 	if(_numGameState == _enumGameState.WAITING) {return false;}
-	if($(this).attr('disabled') == 'disabled') {return false;}
+	if($(this).hasClass('disabled') == true) {return false;}
 	// Validate and connect to server-side via channel.
 	if(!_objChannelSocket) {$(_eleConnectButton).trigger('click');}
 	// Validate game state.
@@ -168,7 +168,7 @@ function _onStartGame(evt) {
 		memberPublic.createGame();
 	}
 	// Set document elements.
-	$(this).attr('disabled', 'disabled').hide();
+	$(this).addClass('disabled').hide();
 	$(_eleEndButton).show();
 	// Run game.
 	memberPublic.runGame();
@@ -181,7 +181,7 @@ function _onChannelMessaged(objMessage) {
 	var objData = $.parseJSON(objMessage.data);
 	// Update game.
 	if(typeof objData.state !== 'undefined') {_numGameState = objData.state;}
-	if(typeof objData.timer !== 'undefined') {_setTimer(objData.timer);}
+	if(typeof objData.timer !== 'undefined' && _objPlayerCurrent && _objPlayerCurrent.numId != 1) {_setTimer(objData.timer);}
 	if(typeof objData.board !== 'undefined') {_objBoardPieces = objData.board;}
 	_setPlayer(1, objData.user1, objData.user1Score);
 	_setPlayer(2, objData.user2, objData.user2Score);
@@ -483,7 +483,7 @@ memberPublic.createGame = function() {
 /** Run game. */
 memberPublic.runGame = function() {
 	_numGameState = _enumGameState.RUNNING;
-	$(_eleEndButton).removeAttr('disabled');
+	$(_eleEndButton).removeClass('disabled');
 	_runTimer();
 	// Update server-side via channel.
 	_sendChannelMessage(_opt.strChannelCheckUrl, {
@@ -494,7 +494,7 @@ memberPublic.runGame = function() {
 /** End game. */
 memberPublic.endGame = function() {
 	_numGameState = _enumGameState.ENDED;
-	$(_eleStartButton).removeAttr('disabled').hide();
+	$(_eleStartButton).removeClass('disabled').hide();
 	$(_eleEndButton).hide();
 	// Update server-side via channel.
 	_sendChannelMessage(_opt.strChannelCheckUrl, {

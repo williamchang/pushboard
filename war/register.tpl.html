@@ -36,6 +36,7 @@
 		<div class="status">$status$</div>
 		<h3>Games Created</h3>
 		<p>For your convenience, if your friend cannot pass the link through any mediums, then click the link below to load your friend's game. Next, input your name and click the &quot;Join&quot; button.</p>
+		<div class="status">Please press the &quot;Reload&quot; button on your browser, if your friend is hosting a game with the same name.</div>
 		<div class="records_container"><div class="items">
 		</div></div>
 <!-- END: Template Region Middle -->
@@ -118,9 +119,9 @@ function _onKey(evt) {
 /** On event, create record. */
 function _onCreateRecord(evt) {
 	// Confirm user.
-	if($(this).attr('disabled') == 'disabled') {return false;}
+	if($(this).hasClass('disabled') == true) {return false;}
 	// Init.
-	var eleButton = $(this).attr('disabled', 'disabled').get(0);
+	var eleButton = $(this).addClass('disabled').get(0);
 	var eleRecord = $(this).closest('.item').get(0);
 	var eleFormUserAlias = $('.txt_useralias', eleRecord).get(0);
 	// Set data parameters.
@@ -133,7 +134,7 @@ function _onCreateRecord(evt) {
 		} else if(status == 'success') {
 			_getRecords();
 		} else {throw(status);}
-		$(eleButton).removeAttr('disabled');
+		$(eleButton).removeClass('disabled');
 	});
 	// Prevent default action.
 	return false;
@@ -142,9 +143,9 @@ function _onCreateRecord(evt) {
 /** On event, redirect to main. */
 function _onRedirectToMain(evt) {
 	// Confirm user.
-	if($(this).attr('disabled') == 'disabled') {return false;}
+	if($(this).hasClass('disabled') == true) {return false;}
 	// Init.
-	var eleButton = $(this).attr('disabled', 'disabled').get(0);
+	var eleButton = $(this).addClass('disabled').get(0);
 	var eleRecord = $(this).closest('.item').get(0);
 	var eleFormUserAlias = $('.txt_useralias', eleRecord).get(0);
 	var strQueryGameKey = $('.hid_gamekey', eleRecord).val();
