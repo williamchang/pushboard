@@ -1,9 +1,43 @@
-# Set certain folders/files or patterns to be ignored.
-.svn/
+## Set certain folders/files or patterns to be ignored.
+
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
 .settings/
-war/WEB-INF/appengine-generated/
-war/WEB-INF/classes/
-war/WEB-INF/lib/
-.classpath
-.project
-.DS_Store
+.loadpath
+.recommenders
+
+# Eclipse Core
+# Comment the next line to allow Eclipse to import project
+#.project
+
+# External tool builders
+.externalToolBuilders/
+
+# Locally stored "Eclipse launch configurations"
+*.launch
+
+# JDT-specific (Eclipse Java Development Tools)
+# Comment the next line to allow Eclipse to import project
+#.classpath
+
+# Java annotation processor (APT)
+.factorypath
+
+# Java annotation processor (APT)
+.factorypath
+
+# Code Recommenders
+.recommenders/
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.next
+release.properties
