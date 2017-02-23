@@ -9,7 +9,7 @@
     0.1
 @date
     - Created: 2017-02-19
-    - Modified: 2017-02-19
+    - Modified: 2017-02-23
     .
 @note
     References:
@@ -54,13 +54,13 @@ public class GameWebSocket {
                 synchronized(wsConnection) {
                     wsConnection.wsClientSession.getBasicRemote().sendText(message);
                 }
-            } catch(IOException e) {
-                System.out.println("WebSocket server failed to send message to the client : " + e);
+            } catch(IOException ex) {
+                System.out.println("WebSocket server failed to send message to the client : " + ex);
                 wsClientConnections.remove(wsConnection);
                 try {
                     wsConnection.wsClientSession.close();
                 } catch(IOException e2) {
-                    System.out.println("WebSocket server failed to close session of the client : " + e);
+                    System.out.println("WebSocket server failed to close session of the client : " + ex);
                 }
                 broadcast(String.format("* %s %s", wsConnection.gameUser.getAlias(), "has been disconnected."));
             }
@@ -75,13 +75,13 @@ public class GameWebSocket {
                         wsConnection.wsClientSession.getBasicRemote().sendText(message);
                     }
                 }
-            } catch(IOException e) {
-                System.out.println("WebSocket server failed to send message to the client : " + e);
+            } catch(IOException ex) {
+                System.out.println("WebSocket server failed to send message to the client : " + ex);
                 wsClientConnections.remove(wsConnection);
                 try {
                     wsConnection.wsClientSession.close();
                 } catch(IOException e2) {
-                    System.out.println("WebSocket server failed to close session of the client : " + e);
+                    System.out.println("WebSocket server failed to close session of the client : " + ex);
                 }
             }
         }

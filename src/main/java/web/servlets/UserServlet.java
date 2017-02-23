@@ -94,7 +94,7 @@ public class UserServlet extends BaseServlet {
         res.setCharacterEncoding("UTF-8");
         res.getWriter().write(strHtml);
 
-        if(reader != null) try {reader.close();} catch(Exception e) {}
+        if(reader != null) try {reader.close();} catch(Exception ex) {}
     }
 
     @Override
@@ -131,7 +131,7 @@ public class UserServlet extends BaseServlet {
         String p1 = "";
         sb1.append("[");
         for(int index = 0;index < objs1.size();index += 1) {
-            p1 = GameServlet.getGameUri(req.getRequestURL().toString(), objs1.get(index).getId().toString());
+            p1 = GameServlet.getGameUrl(req.getRequestURL().toString(), objs1.get(index).getId().toString());
 
             sb1.append("{");
             sb1.append("\"userAlias\":\"").append(objs1.get(index).getUser1().getAlias()).append("\"").append(",");
@@ -154,8 +154,8 @@ public class UserServlet extends BaseServlet {
 
     public String logout(HttpServletRequest req, HttpServletResponse res) throws IOException {
         String redirectGuestUrl = "/pushboard/user";
-
         HttpSession webSession = req.getSession(false);
+
         if(webSession != null) {
             webSession.invalidate();
         }

@@ -9,7 +9,7 @@
     0.1
 @date
     - Created: 2011-04-04
-    - Modified: 2017-02-21
+    - Modified: 2017-02-23
     .
 @note
     References:
@@ -65,7 +65,7 @@ public class GameServlet extends BaseServlet {
         // Validate user.
         if(userAlias == null || userAlias.isEmpty()) {
             // Redirect user.
-            res.sendRedirect(res.encodeRedirectURL(getGameUri(redirectGuestUrl, gameKey)));
+            res.sendRedirect(res.encodeRedirectURL(getGameUrl(redirectGuestUrl, gameKey)));
             return;
         }
 
@@ -134,7 +134,7 @@ public class GameServlet extends BaseServlet {
         strHtml = strHtml.replaceAll("\\$user_me_alias\\$", reqUser.getAlias());
         strHtml = strHtml.replaceAll("\\$game_timer\\$", Integer.toString(reqGame.getTimer()));
         strHtml = strHtml.replaceAll("\\$game_key\\$", gameKey);
-        strHtml = strHtml.replaceAll("\\$game_link\\$", getGameUri(req.getRequestURL().toString(), gameKey));
+        strHtml = strHtml.replaceAll("\\$game_link\\$", getGameUrl(req.getRequestURL().toString(), gameKey));
         strHtml = strHtml.replaceAll("\\$channel_message_initial\\$", reqGame.getChannelMessage(ChannelMessageType.GENERIC));
 
         // Set view.
@@ -142,29 +142,30 @@ public class GameServlet extends BaseServlet {
         res.setCharacterEncoding("UTF-8");
         res.getWriter().write(strHtml);
 
-        if(reader != null) try {reader.close();} catch(Exception e) {}
+        if(reader != null) try {reader.close();} catch(Exception ex) {}
     }
 
-    /** Get game URI. */
-    public static String getGameUri(String url, String gameKey) throws IOException {
+    /**
+     * Get game URL aka URI.
+     * */
+    public static String getGameUrl(String url, String gameKey) throws IOException {
         try {
-            String qs;
-            if(gameKey == null) {
-                qs = "";
-            } else {
-                qs = "gameKey=" + gameKey;
+            String uriQuery = null;
+            String uriFragment = null;
+            if(gameKey != null && !gameKey.isEmpty()) {
+                uriQuery = "gameKey=" + gameKey;
             }
             URI uriThis = new URI(url);
-            URI uriWithOptionalGameParam = new URI(
+            URI uriWithOptionalParameters = new URI(
                 uriThis.getScheme(),
                 uriThis.getUserInfo(),
                 uriThis.getHost(),
                 uriThis.getPort(),
                 uriThis.getPath(),
-                qs,
-                null
+                uriQuery,
+                uriFragment
             );
-            return uriWithOptionalGameParam.toString();
+            return uriWithOptionalParameters.toString();
         } catch(URISyntaxException ex) {
             throw new IOException(ex.getMessage());
         }

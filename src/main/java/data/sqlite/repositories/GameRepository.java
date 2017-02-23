@@ -7,7 +7,7 @@
     0.1
 @date
     - Created: 2017-02-19
-    - Modified: 2017-02-21
+    - Modified: 2017-02-23
     .
 @note
     References:
@@ -71,11 +71,11 @@ public class GameRepository extends BaseRepository implements IGameRepository {
             if(numRowsAffected <= 0) {
                 return null;
             }
-        } catch(Exception e) {
-            e.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
         } finally {
-            if(sqlConnection != null) try {sqlConnection.close();} catch(Exception e) {}
-            if(sqlStatement != null) try {sqlStatement.close();} catch(Exception e) {}
+            if(sqlConnection != null) try {sqlConnection.close();} catch(Exception ex) {}
+            if(sqlStatement != null) try {sqlStatement.close();} catch(Exception ex) {}
         }
         return g;
     }
@@ -98,11 +98,11 @@ public class GameRepository extends BaseRepository implements IGameRepository {
             if(numRowsAffected <= 0) {
                 return null;
             }
-        } catch(Exception e) {
-            e.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
         } finally {
-            if(sqlConnection != null) try {sqlConnection.close();} catch(Exception e) {}
-            if(sqlStatement != null) try {sqlStatement.close();} catch(Exception e) {}
+            if(sqlConnection != null) try {sqlConnection.close();} catch(Exception ex) {}
+            if(sqlStatement != null) try {sqlStatement.close();} catch(Exception ex) {}
         }
         return u;
     }
@@ -119,11 +119,11 @@ public class GameRepository extends BaseRepository implements IGameRepository {
             if(sqlStatement.executeUpdate() <= 0) {
                 return false;
             }
-        } catch(Exception e) {
-            e.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
         } finally {
-            if(sqlConnection != null) try {sqlConnection.close();} catch(Exception e) {}
-            if(sqlStatement != null) try {sqlStatement.close();} catch(Exception e) {}
+            if(sqlConnection != null) try {sqlConnection.close();} catch(Exception ex) {}
+            if(sqlStatement != null) try {sqlStatement.close();} catch(Exception ex) {}
         }
         return true;
     }
@@ -140,11 +140,11 @@ public class GameRepository extends BaseRepository implements IGameRepository {
             if(sqlStatement.executeUpdate() <= 0) {
                 return false;
             }
-        } catch(Exception e) {
-            e.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
         } finally {
-            if(sqlConnection != null) try {sqlConnection.close();} catch(Exception e) {}
-            if(sqlStatement != null) try {sqlStatement.close();} catch(Exception e) {}
+            if(sqlConnection != null) try {sqlConnection.close();} catch(Exception ex) {}
+            if(sqlStatement != null) try {sqlStatement.close();} catch(Exception ex) {}
         }
         return true;
     }
@@ -161,11 +161,11 @@ public class GameRepository extends BaseRepository implements IGameRepository {
             if(sqlStatement.executeUpdate() <= 0) {
                 return false;
             }
-        } catch(Exception e) {
-            e.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
         } finally {
-            if(sqlConnection != null) try {sqlConnection.close();} catch(Exception e) {}
-            if(sqlStatement != null) try {sqlStatement.close();} catch(Exception e) {}
+            if(sqlConnection != null) try {sqlConnection.close();} catch(Exception ex) {}
+            if(sqlStatement != null) try {sqlStatement.close();} catch(Exception ex) {}
         }
         return true;
     }
@@ -197,12 +197,12 @@ public class GameRepository extends BaseRepository implements IGameRepository {
                     sqlResultSet.getDate("DateCreated")
                 );
             }
-        } catch(Exception e) {
-            e.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
         } finally {
-            if(sqlConnection != null) try {sqlConnection.close();} catch(Exception e) {}
-            if(sqlStatement != null) try {sqlStatement.close();} catch(Exception e) {}
-            if(sqlResultSet != null) try {sqlResultSet.close();} catch(Exception e) {}
+            if(sqlConnection != null) try {sqlConnection.close();} catch(Exception ex) {}
+            if(sqlStatement != null) try {sqlStatement.close();} catch(Exception ex) {}
+            if(sqlResultSet != null) try {sqlResultSet.close();} catch(Exception ex) {}
         }
         return null;
     }
@@ -235,12 +235,12 @@ public class GameRepository extends BaseRepository implements IGameRepository {
                 ));
             }
             return objs1;
-        } catch(Exception e) {
-            e.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
         } finally {
-            if(sqlConnection != null) try {sqlConnection.close();} catch(Exception e) {}
-            if(sqlStatement != null) try {sqlStatement.close();} catch(Exception e) {}
-            if(sqlResultSet != null) try {sqlResultSet.close();} catch(Exception e) {}
+            if(sqlConnection != null) try {sqlConnection.close();} catch(Exception ex) {}
+            if(sqlStatement != null) try {sqlStatement.close();} catch(Exception ex) {}
+            if(sqlResultSet != null) try {sqlResultSet.close();} catch(Exception ex) {}
         }
         return new ArrayList<Game>();
     }
@@ -265,12 +265,12 @@ public class GameRepository extends BaseRepository implements IGameRepository {
                     sqlResultSet.getDate("DateCreated")
                 );
             }
-        } catch(Exception e) {
-            e.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
         } finally {
-            if(sqlConnection != null) try {sqlConnection.close();} catch(Exception e) {}
-            if(sqlStatement != null) try {sqlStatement.close();} catch(Exception e) {}
-            if(sqlResultSet != null) try {sqlResultSet.close();} catch(Exception e) {}
+            if(sqlConnection != null) try {sqlConnection.close();} catch(Exception ex) {}
+            if(sqlStatement != null) try {sqlStatement.close();} catch(Exception ex) {}
+            if(sqlResultSet != null) try {sqlResultSet.close();} catch(Exception ex) {}
         }
         return null;
     }
@@ -295,12 +295,12 @@ public class GameRepository extends BaseRepository implements IGameRepository {
                     sqlResultSet.getDate("DateCreated")
                 );
             }
-        } catch(Exception e) {
-            e.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
         } finally {
-            if(sqlConnection != null) try {sqlConnection.close();} catch(Exception e) {}
-            if(sqlStatement != null) try {sqlStatement.close();} catch(Exception e) {}
-            if(sqlResultSet != null) try {sqlResultSet.close();} catch(Exception e) {}
+            if(sqlConnection != null) try {sqlConnection.close();} catch(Exception ex) {}
+            if(sqlStatement != null) try {sqlStatement.close();} catch(Exception ex) {}
+            if(sqlResultSet != null) try {sqlResultSet.close();} catch(Exception ex) {}
         }
         return null;
     }
@@ -327,11 +327,11 @@ public class GameRepository extends BaseRepository implements IGameRepository {
             if(numRowsAffected <= 0) {
                 return null;
             }
-        } catch(Exception e) {
-            e.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
         } finally {
-            if(sqlConnection != null) try {sqlConnection.close();} catch(Exception e) {}
-            if(sqlStatement != null) try {sqlStatement.close();} catch(Exception e) {}
+            if(sqlConnection != null) try {sqlConnection.close();} catch(Exception ex) {}
+            if(sqlStatement != null) try {sqlStatement.close();} catch(Exception ex) {}
         }
         return g;
     }

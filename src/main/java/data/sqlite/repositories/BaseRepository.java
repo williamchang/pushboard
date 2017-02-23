@@ -7,7 +7,7 @@
     0.1
 @date
     - Created: 2017-02-19
-    - Modified: 2017-02-21
+    - Modified: 2017-02-23
     .
 @note
     References:
@@ -36,8 +36,8 @@ public class BaseRepository implements IBaseRepository {
         try {
             java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
             return formatter.parse(date);
-        } catch (java.text.ParseException e) {
-            e.printStackTrace();
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
         }
         return null;
     }
@@ -66,14 +66,14 @@ public class BaseRepository implements IBaseRepository {
 
     public void closeConnection(java.sql.Connection sqlConnection) {
         if(sqlConnection != null) {
-            try {sqlConnection.close();} catch(java.sql.SQLException e) {}
+            try {sqlConnection.close();} catch(java.sql.SQLException ex) {}
         }
     }
 
     public void closePreparedStatement(java.sql.PreparedStatement sqlPrepareStatement) {
         if(sqlPrepareStatement != null) {
-            try {sqlPrepareStatement.close();} catch(java.sql.SQLException e) {}
-            try {closeConnection(sqlPrepareStatement.getConnection());} catch(java.sql.SQLException e) {}
+            try {sqlPrepareStatement.close();} catch(java.sql.SQLException ex) {}
+            try {closeConnection(sqlPrepareStatement.getConnection());} catch(java.sql.SQLException ex) {}
         }
     }
 

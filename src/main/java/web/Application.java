@@ -29,7 +29,7 @@ public class Application {
             }
             System.out.println("application resolved root folder: " + root.getAbsolutePath());
             return root;
-        } catch (URISyntaxException ex) {
+        } catch(URISyntaxException ex) {
             throw new RuntimeException(ex);
         }
     }
